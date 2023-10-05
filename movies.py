@@ -25,6 +25,18 @@ movie_db: List[Tuple[str, str, int, List[str]]] = [
         ],  # actors/actresses
     ),
     (
+        "avengers: infinity war",
+        "anthony russo",
+        2018,
+        [
+            "scarlett johanson",
+            "chris evans",
+            "chris pratt",
+            "chris hemsworth",
+            "tom holland",
+        ],
+    ),
+    (
         "the big easy",
         "jim mcbride",
         1987,

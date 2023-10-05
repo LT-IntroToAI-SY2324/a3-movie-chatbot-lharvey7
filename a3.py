@@ -199,6 +199,38 @@ def title_by_actor(matches: List[str]) -> List[str]:
             if movie[3][i] == matches[0]:
                 x.append(get_title(movie))
     return x
+def title_by_two_actors(matches: List[str]) -> List[str]:
+    result = []
+    for movie in movie_db:
+        x = False
+        y = False
+        for i in range(len(movie[3])):
+            if movie[3][i] == matches[0]:
+                x = True
+            if movie[3][i] == matches[1]:
+                y = True
+        if x == True and y == True:
+            result.append(movie[0])
+    return result
+def title_by_actors(matches: List[str]) -> List[str]:
+    result = []
+    for movie in movie_db:
+        x = matches[:]
+        if len(x) == 1:
+            z = str.split(x[0])
+            x = []
+            for i in range(len(z)):
+                if i % 2 == 0:
+                    x.append(z[i] + " " + z[i+1] )
+        for i in range(len(movie[3])):
+            for d in range(len(x)):
+                if x[d] == movie[3][i]:
+                    x.pop(d)
+                    break
+        if x == []:
+            result.append(movie[0])
+    return result
+            
 # dummy argument is ignored and doesn't matter
 def bye_action(dummy: List[str]) -> None:
     raise KeyboardInterrupt
@@ -219,6 +251,8 @@ pa_list: List[Tuple[List[str], Callable[[List[str]], List[Any]]]] = [
     (str.split("who acted in %"), actors_by_title),
     (str.split("when was % made"), year_by_title),
     (str.split("in what movies did % appear"), title_by_actor),
+    (str.split("what movies had % and % "), title_by_two_actors),
+    (str.split("what movies had these actors: %"), title_by_actors),
     (["bye"], bye_action),
 ]
 
@@ -237,6 +271,7 @@ def search_pa_list(src: List[str]) -> List[str]:
     """
     for i in range(len(pa_list)):
         if match(pa_list[i][0], src) != None:
+            ##print(match(pa_list[i][0], src))
             if pa_list[i][1](match(pa_list[i][0], src)) == []:
                 return ["No answers"]
             else:
@@ -289,7 +324,7 @@ if __name__ == "__main__":
         ["casablanca", "citizen kane", "gone with the wind", "metropolis"]
     ), "failed title_before_year test"
     assert sorted(title_after_year(["1990"])) == sorted(
-        ["boyz n the hood", "dead again", "the crying game", "flirting", "malcolm x"]
+        ["avengers: infinity war", "boyz n the hood", "dead again", "the crying game", "flirting", "malcolm x"]
     ), "failed title_after_year test"
     assert sorted(director_by_title(["jaws"])) == sorted(
         ["steven spielberg"]
@@ -322,5 +357,16 @@ if __name__ == "__main__":
     assert sorted(
         search_pa_list(["what", "movies", "were", "made", "in", "2020"])
     ) == sorted(["No answers"]), "failed search_pa_list test 3"
-
+    assert sorted(
+        search_pa_list(["what", "movies", "had", "dennis quaid", "and", "ellen barkin"])
+    ) == sorted(["the big easy"]), "failed title_by_two_actors test 1"
+    assert sorted(title_by_two_actors(["dennis quaid", "ellen barkin"])) == sorted(
+        ["the big easy"]
+    ), "failed title_by_two_actors test 2"
+    assert sorted(title_by_actors([ "scarlett johanson", "chris evans", "chris pratt", "chris hemsworth", "tom holland"])) == sorted(
+               ["avengers: infinity war"] 
+            ), "failed title_by_actors test"
+    assert sorted(
+        search_pa_list(["what", "movies", "had", "these", "actors:", "scarlett johanson", "chris evans", "chris pratt", "chris hemsworth", "tom holland" ])
+    ) == sorted(["avengers: infinity war"]), "failed title_by_actors test 2"
     print("All tests passed!")

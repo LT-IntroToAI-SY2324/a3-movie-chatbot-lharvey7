@@ -41,7 +41,6 @@ def match(pattern: List[str], source: List[str]) -> List[str]:
                 while pattern[pind] != source[sind]:
                     accum += " " + source[sind]
                     sind += 1
-
                     # abort in case we've run out of source with more pattern left
                     if sind >= len(source):
                         return None
@@ -70,5 +69,4 @@ def match(pattern: List[str], source: List[str]) -> List[str]:
         else:
             # neither has ended and the words do not match, no match
             return None
-
     return result
